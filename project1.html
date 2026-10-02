@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --bg:#050817; --bg2:#0a1030; --panel:rgba(13,20,52,.68); --panel2:rgba(18,27,66,.76);
+  --text:#edf4ff; --muted:#91a1c8; --cyan:#41e8f5; --violet:#9875ff; --magenta:#f26ccf;
+  --green:#5df0a5; --orange:#ffbb69; --red:#ff7190; --line:rgba(130,165,255,.19);
+  --shadow:0 18px 45px rgba(0,0,0,.34);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-width:320px; background:var(--bg); color:var(--text);
+  font-family:Outfit,system-ui,sans-serif; overflow-x:hidden;
+}
+#stars{
+  position:fixed; inset:0; z-index:-2; width:100%; height:100%;
+  background:
+    radial-gradient(circle at 15% 10%,#14285b 0%,transparent 27%),
+    radial-gradient(circle at 85% 65%,#271645 0%,transparent 32%),
+    var(--bg);
+}
+.noise{
+  position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:.18;
+  background-image:radial-gradient(rgba(255,255,255,.16) .6px,transparent .6px);
+  background-size:6px 6px;
+}
+.container{width:min(1420px,calc(100% - 36px));margin:auto}
+nav{
+  height:82px;display:flex;align-items:center;justify-content:space-between;
+  gap:18px;border-bottom:1px solid rgba(144,170,255,.12)
+}
+.brand{display:flex;align-items:center;gap:12px;white-space:nowrap}
+.brand-mark{
+  width:38px;height:38px;border-radius:13px;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  display:grid;place-items:center;color:#071129;font-weight:900;
+  box-shadow:0 0 28px #49dff477
+}
+.brand b{letter-spacing:1.4px;font-size:19px}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.8px}
+.nav-links{display:flex;gap:24px}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan)}
+.status{
+  font:11px "DM Mono";color:var(--green);
+  border:1px solid rgba(93,240,165,.3);border-radius:20px;
+  padding:8px 11px;white-space:nowrap
+}
+.dot{
+  display:inline-block;width:7px;height:7px;background:var(--green);
+  border-radius:50%;margin-right:6px;box-shadow:0 0 12px var(--green);
+  animation:pulse 1.5s infinite
+}
+.hero{padding:70px 0 38px;text-align:center}
+.eyebrow,.lab-label{font:11px "DM Mono";letter-spacing:1.6px;color:var(--cyan)}
+h1{
+  font-size:clamp(40px,6vw,76px);line-height:.98;margin:16px 0;
+  background:linear-gradient(120deg,#fff 20%,#8aebf5 52%,#c399ff);
+  -webkit-background-clip:text;color:transparent
+}
+.hero p{color:var(--muted);font-size:clamp(16px,2vw,19px);max-width:650px;margin:0 auto 27px}
+button,select,input{font:inherit}
+.btn{
+  border:0;border-radius:12px;padding:12px 17px;cursor:pointer;
+  font-weight:700;color:#fff;transition:.2s;display:inline-flex;
+  align-items:center;justify-content:center;gap:8px
+}
+.btn:active{transform:scale(.96)}
+.btn-primary{
+  background:linear-gradient(115deg,#22cde1,#736cf5);
+  box-shadow:0 8px 28px #3f85ef44
+}
+.btn-secondary{background:rgba(129,147,218,.13);border:1px solid var(--line)}
+.btn:hover{filter:brightness(1.15);transform:translateY(-2px)}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:26px 0 13px}
+.section-title h2{margin:0;font-size:18px}
+.section-title span{color:var(--muted);font:11px "DM Mono"}
+.categories{display:flex;gap:10px;overflow:auto;padding:2px 1px 12px}
+.category{
+  min-width:142px;padding:14px;border:1px solid var(--line);
+  background:var(--panel);border-radius:15px;cursor:pointer;transition:.2s
+}
+.category:hover,.category.active{
+  border-color:var(--cyan);
+  background:linear-gradient(135deg,rgba(54,216,242,.16),rgba(130,90,245,.14));
+  transform:translateY(-2px)
+}
+.category b{display:block;font-size:14px}
+.category small{color:var(--muted);font-size:11px}
+.algorithms{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 25px}
+.algo-chip{
+  border:1px solid var(--line);background:rgba(18,27,66,.55);
+  border-radius:22px;color:#c9d5f7;padding:8px 12px;
+  cursor:pointer;font-size:12px;transition:.2s
+}
+.algo-chip:hover,.algo-chip.selected{
+  background:rgba(65,232,245,.13);border-color:var(--cyan);color:var(--cyan)
+}
+.grid{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(300px,.8fr);gap:18px}
+.panel{
+  background:linear-gradient(135deg,rgba(22,31,71,.76),rgba(9,14,38,.78));
+  border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);
+  backdrop-filter:blur(16px)
+}
+.chamber{padding:18px;min-height:540px}
+.panel-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.panel-top h2{font-size:16px;margin:0}
+.live{
+  font:10px "DM Mono";color:var(--green);border-radius:20px;
+  background:rgba(93,240,165,.1);padding:7px 9px
+}
+.live .dot{width:6px;height:6px}
+.visual-wrap{
+  height:340px;margin:14px 0;position:relative;border-radius:15px;
+  border:1px solid rgba(133,159,245,.13);overflow:hidden;
+  background:radial-gradient(circle at 50% 120%,rgba(68,227,245,.12),transparent 54%),rgba(2,6,25,.55)
+}
+#visual{
+  height:100%;display:flex;align-items:flex-end;justify-content:center;
+  gap:clamp(3px,.55vw,8px);padding:36px 16px 22px;min-width:500px
+}
+.bar{
+  position:relative;flex:1;max-width:42px;min-width:4px;
+  background:linear-gradient(180deg,#6784e9,#3d4fbd);
+  border-radius:7px 7px 3px 3px;
+  transition:height .25s ease,background .18s,transform .18s;
+  box-shadow:inset 0 1px rgba(255,255,255,.28)
+}
+.bar span{
+  position:absolute;top:-20px;left:50%;transform:translateX(-50%);
+  font:10px "DM Mono";color:#dce8ff
+}
+.bar.compare{background:linear-gradient(#ffb967,#ef7d66);transform:translateY(-7px)}
+.bar.swap{background:linear-gradient(#ff79d0,#a864e7);transform:translateY(-11px)}
+.bar.sorted{background:linear-gradient(#68efb5,#23b9b1)}
+.bar.current{background:linear-gradient(#59eafa,#5984f1);transform:translateY(-8px)}
+#visual.cards{align-items:center}
+.search-card{
+  min-width:38px;height:70px;padding:10px 5px;border-radius:10px;
+  border:1px solid rgba(151,174,255,.26);display:grid;place-items:center;
+  background:#26346e;font:13px "DM Mono";transition:.25s
+}
+.search-card.checked{background:#513e7e}
+.search-card.current{background:#cf7d55;box-shadow:0 0 20px #ffae6844}
+.search-card.found{background:#25a981;box-shadow:0 0 24px #5df0a577}
+.target-badge{
+  position:absolute;top:13px;left:14px;color:var(--orange);
+  font:11px "DM Mono";padding:7px 9px;border:1px solid #ffb96844;
+  border-radius:8px;background:#190f1b
+}
+#visual.graph{display:block;position:relative;min-width:0;padding:0}
+.graph-edge{
+  position:absolute;height:2px;background:rgba(150,176,255,.36);
+  transform-origin:0 50%;z-index:0
+}
+.node{
+  position:absolute;width:42px;height:42px;margin:-21px;border-radius:50%;
+  display:grid;place-items:center;background:#1f3477;border:2px solid #7298ed;
+  color:#fff;font:13px "DM Mono";z-index:1;cursor:grab;transition:.22s
+}
+.node.current{
+  background:#dd7b66;border-color:#ffc16e;box-shadow:0 0 22px #ffad6d99
+}
+.node.visited{
+  background:#1f9d82;border-color:#65edbd;box-shadow:0 0 15px #5df0a555
+}
+.node.distance::after{
+  content:attr(data-dist);position:absolute;top:-22px;font-size:10px;color:var(--orange)
+}
+.structure{align-items:center!important}
+.stack-box{
+  width:110px;height:260px;border:2px solid #6d83cc;border-top:0;
+  display:flex;flex-direction:column-reverse;justify-content:flex-start;
+  padding:5px;gap:4px
+}
+.block{
+  height:35px;background:linear-gradient(90deg,#5b6de1,#a25de2);
+  border-radius:5px;display:grid;place-items:center;font:12px "DM Mono";
+  animation:enter .3s
+}
+.queue-box{
+  display:flex;border:2px solid #6d83cc;padding:8px;gap:5px;
+  min-height:72px;align-items:center
+}
+.queue-box .block{min-width:44px}
+.linked-node{
+  position:relative;min-width:58px;height:58px;border:2px solid var(--cyan);
+  background:#1b3c74;border-radius:12px;display:grid;place-items:center;
+  font:13px "DM Mono"
+}
+.linked-node:not(:last-child)::after{
+  content:"→";position:absolute;right:-28px;color:var(--cyan);font-size:24px
+}
+.linked-node:not(:last-child){margin-right:27px}
+.bst{display:block!important;position:relative}
+.tree-node{
+  position:absolute;width:38px;height:38px;margin:-19px;border-radius:50%;
+  background:#735bd6;border:2px solid #c0a6ff;display:grid;place-items:center;
+  font-size:12px;z-index:2
+}
+.controls{
+  padding:15px;display:grid;grid-template-columns:repeat(6,1fr);
+  gap:8px;border-top:1px solid var(--line)
+}
+.controls .btn{font-size:12px;padding:10px 6px}
+.wide{grid-column:span 2}
+.field{display:flex;flex-direction:column;gap:7px;font-size:11px;color:var(--muted)}
+.field select,.field input[type=text]{
+  width:100%;background:#0b1230;border:1px solid var(--line);
+  color:#dce7ff;padding:9px;border-radius:9px;outline:none
+}
+.field input[type=range]{accent-color:var(--cyan);width:100%}
+.timeline{
+  display:flex;gap:5px;align-items:center;overflow:hidden;white-space:nowrap;
+  padding:10px 0 0
+}
+.time-node{font:9px "DM Mono";color:#8998c2}
+.time-node.active{color:var(--cyan);text-shadow:0 0 10px var(--cyan)}
+.time-line{height:1px;min-width:14px;background:#475582}
+.side{display:flex;flex-direction:column;gap:18px}
+.intel,.mission,.complexity{padding:18px}
+.intel h3,.mission h3,.complexity h3{margin:7px 0 9px;font-size:18px}
+.intel p{color:#b3c1df;font-size:13px;line-height:1.5}
+.complexities{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.metric{padding:9px;border-radius:10px;background:rgba(79,95,154,.14)}
+.metric small{display:block;color:var(--muted);font-size:9px}
+.metric b{font:13px "DM Mono";color:var(--cyan)}
+.dna{
+  border-top:1px solid var(--line);padding-top:12px;
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:var(--muted)
+}
+.dna b{color:#dce8ff;font-weight:500}
+.code{
+  background:#060a1e;border:1px solid rgba(120,146,255,.15);
+  border-radius:10px;padding:11px;color:#9feaf0;font:10px/1.55 "DM Mono";
+  white-space:pre-wrap;max-height:118px;overflow:auto
+}
+#complexityCanvas{width:100%;height:150px;display:block}
+.mission{background:linear-gradient(135deg,rgba(128,88,243,.18),rgba(16,25,64,.72))}
+.mission p{color:#bbc7e3;font-size:13px;margin:8px 0}
+.progress{height:7px;border-radius:8px;background:#101735;overflow:hidden}
+.progress i{
+  display:block;height:100%;width:0;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));transition:.5s
+}
+.achievement{font:10px "DM Mono";color:var(--green);margin-top:11px}
+.console{
+  margin:18px 0 40px;padding:16px;background:#050918;
+  border:1px solid #263463;border-radius:16px;box-shadow:var(--shadow)
+}
+.console-head{font:11px "DM Mono";color:var(--cyan);margin-bottom:8px}
+.logs{height:120px;overflow:auto;color:#aebce3;font:11px/1.75 "DM Mono"}
+.logs div::before{content:"> ";color:var(--green)}
+.footer{padding:20px 0 35px;text-align:center;color:#7180a9;font:11px "DM Mono"}
+.mute{
+  position:fixed;bottom:17px;right:17px;width:42px;height:42px;
+  border-radius:50%;border:1px solid var(--line);background:#111a40;
+  color:var(--cyan);cursor:pointer
+}
+@keyframes pulse{50%{opacity:.35;transform:scale(.7)}}
+@keyframes enter{from{transform:translateY(-15px);opacity:0}to{transform:none;opacity:1}}
+@media(max-width:940px){
+  .grid{grid-template-columns:1fr}
+  .side{display:grid;grid-template-columns:1fr 1fr}
+  .intel{grid-row:span 2}
+  .nav-links{display:none}
+}
+@media(max-width:610px){
+  .container{width:min(100% - 22px,1420px)}
+  nav{height:67px}
+  .brand small{display:none}
+  .status{font-size:9px;padding:6px}
+  .hero{padding:48px 0 24px}
+  .chamber{padding:11px;min-height:0}
+  .visual-wrap{height:290px;overflow:auto}
+  .controls{grid-template-columns:repeat(3,1fr)}
+  .wide{grid-column:span 3}
+  .side{display:flex}
+  .complexities{grid-template-columns:1fr 1fr}
+  .btn{padding:11px 10px}
+  .categories{margin-right:-11px}
+  .bar span{display:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="noise"></div>
+
+<div class="container">
+  <nav>
+    <div class="brand">
+      <div class="brand-mark">A</div>
+      <div>
+        <b>ALGO•LAB</b>
+        <small>INTERACTIVE ALGORITHM OBSERVATORY</small>
+      </div>
+    </div>
+
+    <div class="nav-links">
+      <a class="active" href="#visualizer">Visualizer</a>
+      <a href="#algorithms">Algorithms</a>
+      <a href="#playground">Playground</a>
+      <a href="#about">About</a>
+    </div>
+
+    <div class="status"><i class="dot"></i>SYSTEM ONLINE</div>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">◈ EXPERIMENTAL COMPUTATION ENVIRONMENT</div>
+    <h1>Explore Algorithms in Motion.</h1>
+    <p>Watch data structures and algorithms reveal their logic, one operation at a time.</p>
+    <button class="btn btn-primary" onclick="document.getElementById('visualizer').scrollIntoView()">
+      Launch Visualizer <span>→</span>
+    </button>
+    <button class="btn btn-secondary" onclick="document.getElementById('algorithms').scrollIntoView()">
+      Explore Algorithms
+    </button>
+  </header>
+
+  <section id="algorithms">
+    <div class="section-title">
+      <h2>Choose an experiment</h2>
+      <span>16 ALGORITHMS AVAILABLE</span>
+    </div>
+    <div class="categories" id="categories"></div>
+    <div class="algorithms" id="algorithmChips"></div>
+  </section>
+
+  <main class="grid" id="visualizer">
+    <section class="panel chamber">
+      <div class="panel-top">
+        <div>
+          <div class="lab-label">EXPERIMENT #042</div>
+          <h2>EXPERIMENT CHAMBER</h2>
+        </div>
+        <div class="live"><i class="dot"></i><span id="liveText">ALGORITHM READY</span></div>
+      </div>
+
+      <div class="visual-wrap">
+        <div class="target-badge" id="targetBadge" hidden>TARGET: 0</div>
+        <div id="visual"></div>
+      </div>
+
+      <div class="controls" id="playground">
+        <button class="btn btn-primary" id="playBtn">▶ Play</button>
+        <button class="btn btn-secondary" id="pauseBtn">⏸ Pause</button>
+        <button class="btn btn-secondary" id="resetBtn">↻ Reset</button>
+        <button class="btn btn-secondary" id="stepBtn">⏭ Step</button>
+        <button class="btn btn-secondary" id="shuffleBtn">⌁ Shuffle</button>
+        <button class="btn btn-secondary" id="newBtn">✦ New Data</button>
+
+        <label class="field wide">
+          ALGORITHM
+          <select id="algorithmSelect"></select>
+        </label>
+
+        <label class="field wide">
+          ARRAY SIZE <span id="sizeOut">24</span>
+          <input id="sizeSlider" type="range" min="5" max="55" value="24">
+        </label>
+
+        <label class="field wide">
+          ANIMATION SPEED <span id="speedOut">55 ms</span>
+          <input id="speedSlider" type="range" min="10" max="180" value="55">
+        </label>
+
+        <label class="field wide">
+          MANUAL DATA
+          <input id="manualInput" type="text" placeholder="12, 45, 7, 23, 89, 3">
+        </label>
+
+        <button class="btn btn-secondary wide" id="manualBtn">Apply Data</button>
+      </div>
+
+      <div class="timeline" id="timeline"></div>
+    </section>
+
+    <aside class="side">
+      <section class="panel intel">
+        <div class="lab-label">ALGORITHM INTELLIGENCE</div>
+        <h3 id="algoName">Bubble Sort</h3>
+        <p id="description"></p>
+
+        <div class="complexities">
+          <div class="metric"><small>BEST CASE</small><b id="best">O(n)</b></div>
+          <div class="metric"><small>AVERAGE CASE</small><b id="avg">O(n²)</b></div>
+          <div class="metric"><small>WORST CASE</small><b id="worst">O(n²)</b></div>
+          <div class="metric"><small>SPACE</small><b id="space">O(1)</b></div>
+        </div>
+
+        <div class="dna" id="dna"></div>
+        <div class="code" id="pseudo"></div>
+      </section>
+
+      <section class="panel complexity">
+        <div class="lab-label">GROWTH SIGNATURE</div>
+        <h3>Complexity field</h3>
+        <canvas id="complexityCanvas"></canvas>
+      </section>
+
+      <section class="panel mission">
+        <div class="lab-label">MISSION #07</div>
+        <h3 id="missionTitle">Sort 40 elements using Quick Sort.</h3>
+        <p id="missionStatus">Run experiments to earn laboratory XP.</p>
+        <div class="progress"><i id="progress"></i></div>
+        <div class="achievement" id="achievement">◇ Awaiting first discovery</div>
+      </section>
+    </aside>
+  </main>
+
+  <section class="console">
+    <div class="console-head">
+      COMMAND CONSOLE
+      <span style="float:right;color:#5df0a5">DATA STREAM STABLE</span>
+    </div>
+    <div class="logs" id="logs"></div>
+  </section>
+
+  <div class="footer" id="about">
+    ALGO•LAB / DIGITAL CONSTELLATION INTERFACE / BUILD, OBSERVE, UNDERSTAND
+  </div>
+</div>
+
+<button class="mute" id="muteBtn">♪</button>
+
+<script>
+const catalog = {
+  "Sorting": ["Bubble Sort","Selection Sort","Insertion Sort","Merge Sort","Quick Sort","Heap Sort"],
+  "Searching": ["Linear Search","Binary Search"],
+  "Data Structures": ["Stack","Queue","Linked List","Binary Search Tree"],
+  "Graph": ["BFS","DFS","Dijkstra's Algorithm"]
+};
+
+const info = {
+  "Bubble Sort":{
+    d:"Bubble Sort repeatedly compares neighboring elements and swaps them when they are in the wrong order.",
+    b:"O(n)",a:"O(n²)",w:"O(n²)",s:"O(1)",
+    stable:"Stable",place:"In-place",adaptive:"Adaptive",
+    p:"repeat\n  compare adjacent items\n  swap if left > right\nuntil no swaps"
+  },
+  "Selection Sort":{
+    d:"Selection Sort repeatedly finds the smallest remaining value and places it into its final position.",
+    b:"O(n²)",a:"O(n²)",w:"O(n²)",s:"O(1)",
+    stable:"Unstable",place:"In-place",adaptive:"Non-adaptive",
+    p:"for each position i\n  find minimum from i..n\n  swap minimum with i"
+  },
+  "Insertion Sort":{
+    d:"Insertion Sort grows a sorted prefix by inserting each new element into the correct location.",
+    b:"O(n)",a:"O(n²)",w:"O(n²)",s:"O(1)",
+    stable:"Stable",place:"In-place",adaptive:"Adaptive",
+    p:"for i = 1 to n-1\n  key = array[i]\n  shift larger values right\n  insert key"
+  },
+  "Merge Sort":{
+    d:"Merge Sort divides data into smaller halves, sorts them recursively, then merges ordered halves.",
+    b:"O(n log n)",a:"O(n log n)",w:"O(n log n)",s:"O(n)",
+    stable:"Stable",place:"Not in-place",adaptive:"Non-adaptive",
+    p:"split array in halves\nsort each half recursively\nmerge the sorted halves"
+  },
+  "Quick Sort":{
+    d:"Quick Sort partitions values around a pivot, then recursively sorts both partitions.",
+    b:"O(n log n)",a:"O(n log n)",w:"O(n²)",s:"O(log n)",
+    stable:"Unstable",place:"In-place",adaptive:"Non-adaptive",
+    p:"choose a pivot\npartition around pivot\nquickSort(left)\nquickSort(right)"
+  },
+  "Heap Sort":{
+    d:"Heap Sort turns the array into a max heap and repeatedly extracts the largest value.",
+    b:"O(n log n)",a:"O(n log n)",w:"O(n log n)",s:"O(1)",
+    stable:"Unstable",place:"In-place",adaptive:"Non-adaptive",
+    p:"build max heap\nswap root with last\nheapify reduced heap"
+  },
+  "Linear Search":{
+    d:"Linear Search checks each element in order until it finds the target or reaches the end.",
+    b:"O(1)",a:"O(n)",w:"O(n)",s:"O(1)",
+    stable:"—",place:"—",adaptive:"—",
+    p:"for each item\n  if item equals target\n    return its index\nreturn not found"
+  },
+  "Binary Search":{
+    d:"Binary Search repeatedly halves a sorted array, comparing the target with the middle element.",
+    b:"O(1)",a:"O(log n)",w:"O(log n)",s:"O(1)",
+    stable:"—",place:"—",adaptive:"—",
+    p:"while low <= high\n  mid = middle index\n  discard one half\nreturn match or -1"
+  },
+  "BFS":{
+    d:"Breadth-First Search explores a graph level by level using a queue.",
+    b:"O(V + E)",a:"O(V + E)",w:"O(V + E)",s:"O(V)",
+    stable:"—",place:"—",adaptive:"—",
+    p:"enqueue start node\nwhile queue not empty\n  visit next node\n  enqueue neighbors"
+  },
+  "DFS":{
+    d:"Depth-First Search explores as far as possible along each branch before backtracking.",
+    b:"O(V + E)",a:"O(V + E)",w:"O(V + E)",s:"O(V)",
+    stable:"—",place:"—",adaptive:"—",
+    p:"visit start node\nfor every neighbor\n  if unvisited\n    depthFirstSearch(neighbor)"
+  },
+  "Dijkstra's Algorithm":{
+    d:"Dijkstra's Algorithm finds shortest paths by repeatedly selecting the closest unvisited node.",
+    b:"O((V+E) log V)",a:"O((V+E) log V)",w:"O((V+E) log V)",s:"O(V)",
+    stable:"—",place:"—",adaptive:"—",
+    p:"distance[start] = 0\nchoose closest unvisited\nrelax its edges\nrepeat until complete"
+  },
+  "Stack":{
+    d:"A Stack follows Last In, First Out: the latest item pushed is the first item popped.",
+    b:"O(1)",a:"O(1)",w:"O(1)",s:"O(n)",
+    stable:"LIFO",place:"—",adaptive:"—",
+    p:"push(value): add to top\npop(): remove from top\npeek(): inspect top"
+  },
+  "Queue":{
+    d:"A Queue follows First In, First Out: items leave in the order they arrive.",
+    b:"O(1)",a:"O(1)",w:"O(1)",s:"O(n)",
+    stable:"FIFO",place:"—",adaptive:"—",
+    p:"enqueue(value): add rear\ndequeue(): remove front\npeek(): inspect front"
+  },
+  "Linked List":{
+    d:"A Linked List stores values in connected nodes, where each node points to the next.",
+    b:"O(1)",a:"O(n)",w:"O(n)",s:"O(n)",
+    stable:"Ordered",place:"—",adaptive:"—",
+    p:"node.value = value\nnode.next = next node\ntraverse through links"
+  },
+  "Binary Search Tree":{
+    d:"A Binary Search Tree keeps smaller values left and larger values right for efficient lookup.",
+    b:"O(log n)",a:"O(log n)",w:"O(n)",s:"O(n)",
+    stable:"Ordered",place:"—",adaptive:"—",
+    p:"if value < node\n  insert left\nelse\n  insert right"
+  }
+};
+
+let algorithm = "Bubble Sort";
+let array = [];
+let original = [];
+let steps = [];
+let stepIndex = 0;
+let playing = false;
+let paused = false;
+let timer = null;
+let stats = {c:0,s:0,a:0};
+let muted = false;
+
+const $ = id => document.getElementById(id);
+const visual = $("visual");
+const logs = $("logs");
+
+function log(text){
+  const line = document.createElement("div");
+  line.textContent = text;
+  logs.prepend(line);
+}
+
+function randomArray(n = +$("sizeSlider").value){
+  array = Array.from({length:n}, () => Math.floor(Math.random()*85)+12);
+  original = [...array];
+  resetRun();
+  log(`Generated ${n} elements`);
+}
+
+function resetRun(){
+  steps = [];
+  stepIndex = 0;
+  playing = false;
+  paused = false;
+  clearTimeout(timer);
+  stats = {c:0,s:0,a:0};
+  render();
+  updateStats("Ready for launch");
+  $("liveText").textContent = "ALGORITHM READY";
+}
+
+function buildUI(){
+  for(const [cat,items] of Object.entries(catalog)){
+    const card = document.createElement("div");
+    card.className = "category" + (cat === "Sorting" ? " active" : "");
+    card.innerHTML = `<b>${cat}</b><small>${items.length} experiments</small>`;
+
+    card.onclick = () => {
+      document.querySelectorAll(".category").forEach(x => x.classList.remove("active"));
+      card.classList.add("active");
+      renderChips(items);
+    };
+
+    $("categories").append(card);
+  }
+
+  renderChips(catalog.Sorting);
+
+  Object.keys(info).forEach(name => {
+    $("algorithmSelect").add(new Option(name,name));
+  });
+
+  $("algorithmSelect").value = algorithm;
+}
+
+function renderChips(items){
+  const root = $("algorithmChips");
+  root.innerHTML = "";
+
+  items.forEach(name => {
+    const chip = document.createElement("button");
+    chip.className = "algo-chip" + (name === algorithm ? " selected" : "");
+    chip.textContent = name;
+    chip.onclick = () => selectAlgorithm(name);
+    root.append(chip);
+  });
+}
+
+function selectAlgorithm(name){
+  algorithm = name;
+  $("algorithmSelect").value = name;
+  updateInfo();
+  resetRun();
+  log(`Selected experiment: ${name}`);
+}
+
+function updateInfo(){
+  const x = info[algorithm];
+
+  $("algoName").textContent = algorithm;
+  $("description").textContent = x.d;
+  $("best").textContent = x.b;
+  $("avg").textContent = x.a;
+  $("worst").textContent = x.w;
+  $("space").textContent = x.s;
+  $("pseudo").textContent = x.p;
+
+  $("dna").innerHTML = `
+    <div>STABILITY<br><b>${x.stable}</b></div>
+    <div>MEMORY<br><b>${x.place}</b></div>
+    <div>BEHAVIOR<br><b>${x.adaptive}</b></div>
+    <div>STATUS<br><b>READY</b></div>
+  `;
+
+  drawComplexity();
+}
+
+function render(state = {}){
+  visual.className = "";
+  visual.innerHTML = "";
+  $("targetBadge").hidden = true;
+
+  if(["BFS","DFS","Dijkstra's Algorithm"].includes(algorithm)){
+    renderGraph(state);
+    return;
+  }
+
+  if(["Stack","Queue","Linked List","Binary Search Tree"].includes(algorithm)){
+    renderStructure();
+    return;
+  }
+
+  const isSearch = ["Linear Search","Binary Search"].includes(algorithm);
+
+  if(isSearch){
+    visual.className = "cards";
+    $("targetBadge").hidden = false;
+    $("targetBadge").textContent = `TARGET: ${state.target ?? array[Math.floor(array.length/2)]}`;
+
+    array.forEach((value,index) => {
+      const element = document.createElement("div");
+      element.className =
+        "search-card " +
+        (state.checked?.includes(index) ? "checked " : "") +
+        (state.current === index ? "current " : "") +
+        (state.found === index ? "found" : "");
+
+      element.textContent = value;
+      visual.append(element);
+    });
+
+    return;
+  }
+
+  const max = Math.max(...array);
+
+  array.forEach((value,index) => {
+    const bar = document.createElement("div");
+
+    bar.className =
+      "bar " +
+      (state.compare?.includes(index) ? "compare " : "") +
+      (state.swap?.includes(index) ? "swap " : "") +
+      (state.sorted?.includes(index) ? "sorted " : "") +
+      (state.current === index ? "current" : "");
+
+    bar.style.height = (value/max*245) + "px";
+
+    if(array.length < 30){
+      bar.innerHTML = "<span>" + value + "</span>";
+    }
+
+    visual.append(bar);
+  });
+}
+
+function renderStructure(){
+  visual.className = "structure";
+
+  if(algorithm === "Stack"){
+    const stack = document.createElement("div");
+    stack.className = "stack-box";
+
+    array.slice(0,6).forEach(value => {
+      stack.innerHTML += `<div class="block">${value}</div>`;
+    });
+
+    visual.append(stack);
+  }
+
+  else if(algorithm === "Queue"){
+    const queue = document.createElement("div");
+    queue.className = "queue-box";
+
+    array.slice(0,7).forEach(value => {
+      queue.innerHTML += `<div class="block">${value}</div>`;
+    });
+
+    visual.append(queue);
+  }
+
+  else if(algorithm === "Linked List"){
+    array.slice(0,5).forEach(value => {
+      const node = document.createElement("div");
+      node.className = "linked-node";
+      node.textContent = value;
+      visual.append(node);
+    });
+  }
+
+  else{
+    visual.className = "bst";
+
+    [[50,50],[27,28],[72,28],[15,73],[37,73],[63,73],[84,73]].forEach((point,index) => {
+      const node = document.createElement("div");
+      node.className = "tree-node";
+      node.style.left = point[0] + "%";
+      node.style.top = point[1] + "%";
+      node.textContent = [50,27,72,15,37,63,84][index];
+      visual.append(node);
+    });
+  }
+}
+
+const graphNodes = ["A","B","C","D","E","F"];
+const edges = [[0,1],[0,2],[1,3],[1,4],[2,4],[3,5],[4,5]];
+const positions = [[18,50],[36,25],[37,76],[62,18],[62,62],[84,45]];
+
+function renderGraph(state = {}){
+  visual.className = "graph";
+
+  edges.forEach(([a,b]) => {
+    const [x1,y1] = positions[a];
+    const [x2,y2] = positions[b];
+    const dx = x2-x1;
+    const dy = y2-y1;
+    const length = Math.hypot(dx,dy);
+
+    const edge = document.createElement("div");
+    edge.className = "graph-edge";
+    edge.style.cssText =
+      `left:${x1}%;top:${y1}%;width:${length}%;transform:rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`;
+
+    visual.append(edge);
+  });
+
+  graphNodes.forEach((name,index) => {
+    const node = document.createElement("div");
+
+    node.className =
+      "node " +
+      (state.current === index ? "current " : "") +
+      (state.visited?.includes(index) ? "visited " : "") +
+      (algorithm === "Dijkstra's Algorithm" ? "distance" : "");
+
+    node.style.left = positions[index][0] + "%";
+    node.style.top = positions[index][1] + "%";
+    node.textContent = name;
+
+    node.dataset.dist =
+      state.dist?.[index] === Infinity
+        ? "∞"
+        : (state.dist?.[index] ?? "");
+
+    drag(node);
+    visual.append(node);
+  });
+}
+
+function drag(element){
+  let active = false;
+
+  element.onpointerdown = event => {
+    active = true;
+    element.setPointerCapture(event.pointerId);
+  };
+
+  element.onpointermove = event => {
+    if(!active) return;
+
+    const rect = visual.getBoundingClientRect();
+    const index = graphNodes.indexOf(element.textContent);
+
+    positions[index] = [
+      (event.clientX - rect.left)/rect.width*100,
+      (event.clientY - rect.top)/rect.height*100
+    ];
+
+    renderGraph();
+  };
+
+  element.onpointerup = () => active = false;
+}
+
+function push(arr,state,operation){
+  steps.push({
+    arr:[...arr],
+    state,
+    op:operation
+  });
+}
+
+function sortingSteps(type){
+  const a = [...array];
+  const n = a.length;
+
+  const compare = (i,j) => {
+    stats.c++;
+    stats.a += 2;
+    push(a,{compare:[i,j]},`Comparing index ${i} ↔ index ${j}`);
+  };
+
+  const swap = (i,j) => {
+    [a[i],a[j]] = [a[j],a[i]];
+    stats.s++;
+    push(a,{swap:[i,j]},`Swap executed at ${i} and ${j}`);
+  };
+
+  if(type === "Bubble Sort"){
+    for(let i=0;i<n-1;i++){
+      for(let j=0;j<n-i-1;j++){
+        compare(j,j+1);
+        if(a[j] > a[j+1]) swap(j,j+1);
+      }
+      push(a,{sorted:[n-i-1]},`Element ${n-i-1} locked into position`);
+    }
+  }
+
+  if(type === "Selection Sort"){
+    for(let i=0;i<n-1;i++){
+      let min = i;
+
+      for(let j=i+1;j<n;j++){
+        compare(min,j);
+        if(a[j] < a[min]) min = j;
+      }
+
+      if(min !== i) swap(i,min);
+
+      push(
+        a,
+        {sorted:Array.from({length:i+1},(_,k)=>k)},
+        `Minimum placed at index ${i}`
+      );
+    }
+  }
+
+  if(type === "Insertion Sort"){
+    for(let i=1;i<n;i++){
+      const key = a[i];
+      let j = i-1;
+
+      push(a,{current:i},`Inserting value ${key}`);
+
+      while(j >= 0){
+        compare(j,j+1);
+
+        if(a[j] <= key) break;
+
+        a[j+1] = a[j];
+        stats.s++;
+        push(a,{swap:[j,j+1]},`Shifted index ${j}`);
+        j--;
+      }
+
+      a[j+1] = key;
+      push(a,{current:j+1},`Inserted value ${key}`);
+    }
+  }
+
+  if(type === "Merge Sort"){
+    function mergeSort(left,right){
+      if(left >= right) return;
+
+      const middle = (left+right)>>1;
+
+      mergeSort(left,middle);
+      mergeSort(middle+1,right);
+
+      const L = a.slice(left,middle+1);
+      const R = a.slice(middle+1,right+1);
+
+      let i = 0;
+      let j = 0;
+      let k = left;
+
+      while(i < L.length && j < R.length){
+        stats.c++;
+
+        if(L[i] <= R[j]){
+          a[k++] = L[i++];
+        }else{
+          a[k++] = R[j++];
+        }
+
+        push(a,{current:k-1},`Merging partitions at index ${k-1}`);
+      }
+
+      while(i < L.length){
+        a[k++] = L[i++];
+        push(a,{current:k-1},"Completing merge");
+      }
+
+      while(j < R.length){
+        a[k++] = R[j++];
+        push(a,{current:k-1},"Completing merge");
+      }
+    }
+
+    mergeSort(0,n-1);
+  }
+
+  if(type === "Quick Sort"){
+    function quickSort(left,right){
+      if(left >= right) return;
+
+      const pivot = a[right];
+      let i = left;
+
+      for(let j=left;j<right;j++){
+        compare(j,right);
+
+        if(a[j] < pivot){
+          swap(i,j);
+          i++;
+        }
+      }
+
+      swap(i,right);
+      push(a,{sorted:[i]},`Pivot ${pivot} placed at index ${i}`);
+
+      quickSort(left,i-1);
+      quickSort(i+1,right);
+    }
+
+    quickSort(0,n-1);
+  }
+
+  if(type === "Heap Sort"){
+    function heapify(size,index){
+      let largest = index;
+      const left = 2*index+1;
+      const right = left+1;
+
+      if(left < size){
+        compare(left,largest);
+        if(a[left] > a[largest]) largest = left;
+      }
+
+      if(right < size){
+        compare(right,largest);
+        if(a[right] > a[largest]) largest = right;
+      }
+
+      if(largest !== index){
+        swap(index,largest);
+        heapify(size,largest);
+      }
+    }
+
+    for(let i=Math.floor(n/2)-1;i>=0;i--){
+      heapify(n,i);
+    }
+
+    for(let i=n-1;i>0;i--){
+      swap(0,i);
+
+      push(
+        a,
+        {sorted:Array.from({length:n-i},(_,k)=>n-1-k)},
+        `Extracted maximum to index ${i}`
+      );
+
+      heapify(i,0);
+    }
+  }
+
+  push(
+    a,
+    {sorted:Array.from({length:n},(_,i)=>i)},
+    "Algorithm completed — all elements sorted"
+  );
+}
+
+function searchSteps(binary){
+  const a = binary ? [...array].sort((x,y)=>x-y) : [...array];
+
+  array = a;
+
+  const target = a[Math.floor(a.length*.63)];
+  const checked = [];
+
+  if(binary){
+    let left = 0;
+    let right = a.length-1;
+
+    while(left <= right){
+      const middle = (left+right)>>1;
+
+      stats.c++;
+      checked.push(middle);
+
+      push(
+        a,
+        {current:middle,checked:[...checked],target},
+        `Checking middle index ${middle}`
+      );
+
+      if(a[middle] === target){
+        push(a,{found:middle,checked,target},`Target ${target} found at index ${middle}`);
+        break;
+      }
+
+      if(a[middle] < target) left = middle+1;
+      else right = middle-1;
+    }
+  }else{
+    for(let i=0;i<a.length;i++){
+      stats.c++;
+      checked.push(i);
+
+      push(
+        a,
+        {current:i,checked:[...checked],target},
+        `Checking index ${i}`
+      );
+
+      if(a[i] === target){
+        push(a,{found:i,checked,target},`Target ${target} found at index ${i}`);
+        break;
+      }
+    }
+  }
+}
+
+function graphSteps(kind){
+  const adjacency = [
+    [1,2],
+    [0,3,4],
+    [0,4],
+    [1,5],
+    [1,2,5],
+    [3,4]
+  ];
+
+  const visited = [];
+  const seen = new Set();
+
+  if(kind === "Dijkstra's Algorithm"){
+    const distance = Array(6).fill(Infinity);
+    distance[0] = 0;
+
+    const queue = [0];
+
+    while(queue.length){
+      queue.sort((a,b)=>distance[a]-distance[b]);
+
+      const current = queue.shift();
+
+      if(seen.has(current)) continue;
+
+      seen.add(current);
+      visited.push(current);
+
+      push(
+        array,
+        {current,visited:[...visited],dist:[...distance]},
+        `Settled node ${graphNodes[current]} at distance ${distance[current]}`
+      );
+
+      adjacency[current].forEach(neighbor => {
+        if(distance[neighbor] > distance[current]+1){
+          distance[neighbor] = distance[current]+1;
+          queue.push(neighbor);
+        }
+      });
+    }
+  }
+
+  else if(kind === "BFS"){
+    const queue = [0];
+    seen.add(0);
+
+    while(queue.length){
+      const current = queue.shift();
+
+      visited.push(current);
+
+      push(
+        array,
+        {current,visited:[...visited]},
+        `Visited node ${graphNodes[current]} using queue`
+      );
+
+      adjacency[current].forEach(neighbor => {
+        if(!seen.has(neighbor)){
+          seen.add(neighbor);
+          queue.push(neighbor);
+        }
+      });
+    }
+  }
+
+  else{
+    function dfs(current){
+      seen.add(current);
+      visited.push(current);
+
+      push(
+        array,
+        {current,visited:[...visited]},
+        `Depth traversal: node ${graphNodes[current]}`
+      );
+
+      adjacency[current].forEach(neighbor => {
+        if(!seen.has(neighbor)) dfs(neighbor);
+      });
+    }
+
+    dfs(0);
+  }
+
+  push(array,{visited:[...visited]},"Graph traversal complete");
+}
+
+function prepare(){
+  steps = [];
+  stats = {c:0,s:0,a:0};
+
+  if(["Stack","Queue","Linked List","Binary Search Tree"].includes(algorithm)){
+    log(`${algorithm} structural model rendered`);
+    return;
+  }
+
+  if(["Linear Search","Binary Search"].includes(algorithm)){
+    searchSteps(algorithm === "Binary Search");
+  }
+
+  else if(["BFS","DFS","Dijkstra's Algorithm"].includes(algorithm)){
+    graphSteps(algorithm);
+  }
+
+  else{
+    sortingSteps(algorithm);
+  }
+
+  stepIndex = 0;
+  array = [...original];
+}
+
+function updateStats(operation){
+  const progress = Math.min(5,Math.floor(stepIndex/Math.max(1,steps.length)*6));
+
+  $("timeline").innerHTML = ["START","COMPARE","SWAP","COMPARE","SWAP","SORTED"]
+    .map((text,index) => `
+      <span class="time-node ${index === progress ? "active" : ""}">${text}</span>
+      ${index < 5 ? '<span class="time-line"></span>' : ""}
+    `)
+    .join("");
+
+  $("liveText").textContent = playing ? "VISUALIZATION ACTIVE" : "ALGORITHM READY";
+
+  log(operation || "System ready");
+}
+
+function doStep(){
+  if(stepIndex >= steps.length){
+    finish();
+    return false;
+  }
+
+  const currentStep = steps[stepIndex++];
+
+  array = [...currentStep.arr];
+  render(currentStep.state);
+  updateStats(currentStep.op);
+
+  if(!muted && currentStep.state.swap){
+    beep(180);
+  }
+
+  return true;
+}
+
+function run(){
+  if(!steps.length) prepare();
+
+  if(!steps.length) return;
+
+  if(stepIndex >= steps.length) stepIndex = 0;
+
+  playing = true;
+  paused = false;
+  $("playBtn").innerHTML = "▶ Running";
+
+  function loop(){
+    if(!playing || paused) return;
+
+    if(!doStep()) return;
+
+    timer = setTimeout(loop,190-$("speedSlider").value);
+  }
+
+  loop();
+}
+
+function finish(){
+  playing = false;
+  $("playBtn").innerHTML = "▶ Play";
+  $("liveText").textContent = "MISSION COMPLETE";
+  log("Algorithm completed successfully");
+  award();
+}
+
+function award(){
+  const xp = +(localStorage.algoXP || 0) + 250;
+  const runs = +(localStorage.algoRuns || 0) + 1;
+
+  localStorage.algoXP = xp;
+  localStorage.algoRuns = runs;
+
+  $("missionStatus").textContent = `✓ Mission Complete · +250 XP · Total XP: ${xp}`;
+  $("progress").style.width = Math.min(100,20+runs*8) + "%";
+
+  $("achievement").textContent =
+    runs === 1
+      ? "✦ Achievement unlocked: First Sort"
+      : runs >= 10
+        ? "✦ Achievement unlocked: Algorithm Explorer"
+        : "◇ Experiment logged in local memory";
+}
+
+function drawComplexity(){
+  const canvas = $("complexityCanvas");
+  const context = canvas.getContext("2d");
+
+  let width = canvas.width = canvas.clientWidth*2;
+  let height = canvas.height = 300;
+
+  context.scale(2,2);
+
+  width /= 2;
+  height /= 2;
+
+  context.clearRect(0,0,width,height);
+
+  context.strokeStyle = "rgba(155,176,255,.17)";
+  context.lineWidth = 1;
+
+  for(let i=1;i<5;i++){
+    context.beginPath();
+    context.moveTo(0,i*height/5);
+    context.lineTo(width,i*height/5);
+    context.stroke();
+  }
+
+  const complexity = info[algorithm].a;
+
+  const power =
+    complexity.includes("²") ? 2 :
+    complexity.includes("log") && complexity.includes("n") ? 1.25 :
+    complexity.includes("log") ? .35 :
+    complexity.includes("V") ? 1.15 :
+    complexity === "O(1)" ? 0 : 1;
+
+  context.beginPath();
+
+  for(let x=0;x<=width;x+=4){
+    const t = x/width;
+
+    const y =
+      power === 0
+        ? height*.72
+        : height-12-(Math.pow(t,power)*height*.68);
+
+    if(x) context.lineTo(x,y);
+    else context.moveTo(x,y);
+  }
+
+  context.strokeStyle = "#41e8f5";
+  context.lineWidth = 2.5;
+  context.shadowBlur = 12;
+  context.shadowColor = "#41e8f5";
+  context.stroke();
+  context.shadowBlur = 0;
+
+  context.fillStyle = "#91a1c8";
+  context.font = "10px DM Mono";
+  context.fillText(`ACTIVE: ${complexity}`,9,16);
+  context.fillText("INPUT SIZE →",width-83,height-6);
+}
+
+$("playBtn").onclick = run;
+
+$("pauseBtn").onclick = () => {
+  paused = !paused;
+  $("pauseBtn").innerHTML = paused ? "▶ Resume" : "⏸ Pause";
+
+  if(!paused) run();
+};
+
+$("stepBtn").onclick = () => {
+  if(!steps.length) prepare();
+  doStep();
+};
+
+$("resetBtn").onclick = () => {
+  array = [...original];
+  resetRun();
+  log("Experiment reset to initial state");
+};
+
+$("newBtn").onclick = randomArray;
+
+$("shuffleBtn").onclick = () => {
+  array.sort(() => Math.random()-.5);
+  original = [...array];
+  resetRun();
+  log("Data stream shuffled");
+};
+
+$("algorithmSelect").onchange = event => {
+  selectAlgorithm(event.target.value);
+};
+
+$("sizeSlider").oninput = event => {
+  $("sizeOut").textContent = event.target.value;
+  randomArray();
+};
+
+$("speedSlider").oninput = event => {
+  $("speedOut").textContent = event.target.value + " ms";
+};
+
+$("manualBtn").onclick = () => {
+  const values = $("manualInput").value
+    .split(",")
+    .map(value => Number(value.trim()))
+    .filter(value => Number.isFinite(value));
+
+  if(values.length < 2 || values.length > 55){
+    log("Input rejected: provide 2–55 valid numbers");
+    return;
+  }
+
+  array = values;
+  original = [...values];
+
+  resetRun();
+  log("Manual data loaded");
+};
+
+function beep(frequency){
+  try{
+    const audio = new(window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+
+    oscillator.frequency.value = frequency;
+
+    gain.gain.setValueAtTime(.025,audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.05);
+
+    oscillator.connect(gain);
+    gain.connect(audio.destination);
+
+    oscillator.start();
+    oscillator.stop(audio.currentTime+.05);
+  }catch(error){}
+}
+
+$("muteBtn").onclick = () => {
+  muted = !muted;
+  $("muteBtn").textContent = muted ? "◌" : "♪";
+};
+
+function starfield(){
+  const canvas = $("stars");
+  const context = canvas.getContext("2d");
+  const particles = [];
+
+  function resize(){
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+  }
+
+  resize();
+
+  for(let i=0;i<70;i++){
+    particles.push({
+      x:Math.random()*innerWidth,
+      y:Math.random()*innerHeight,
+      vx:(Math.random()-.5)*.12,
+      vy:(Math.random()-.5)*.12,
+      r:Math.random()*1.4+.2
+    });
+  }
+
+  function tick(){
+    context.clearRect(0,0,canvas.width,canvas.height);
+
+    for(const particle of particles){
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+
+      if(particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
+      if(particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+
+      context.fillStyle = "rgba(132,205,255,.55)";
+      context.beginPath();
+      context.arc(particle.x,particle.y,particle.r,0,7);
+      context.fill();
+    }
+
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const a = particles[i];
+        const b = particles[j];
+
+        const distance = Math.hypot(a.x-b.x,a.y-b.y);
+
+        if(distance < 105){
+          context.strokeStyle = `rgba(96,145,245,${.11*(1-distance/105)})`;
+          context.beginPath();
+          context.moveTo(a.x,a.y);
+          context.lineTo(b.x,b.y);
+          context.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  addEventListener("resize",resize);
+  tick();
+}
+
+buildUI();
+randomArray();
+updateInfo();
+
+log("Initializing Bubble Sort...");
+log("Generated 24 elements");
+
+$("progress").style.width = Math.min(100,20+(+(localStorage.algoRuns || 0))*8) + "%";
+
+starfield();
+</script>
+</body>
+</html>
